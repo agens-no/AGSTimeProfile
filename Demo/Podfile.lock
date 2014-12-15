@@ -1,0 +1,14 @@
+PODS:
+  - AGSTimeProfile (1.0)
+
+DEPENDENCIES:
+  - AGSTimeProfile (from `../AGSTimeProfile.podspec`)
+
+EXTERNAL SOURCES:
+  AGSTimeProfile:
+    :path: ../AGSTimeProfile.podspec
+
+SPEC CHECKSUMS:
+  AGSTimeProfile: 3393a7d4bfbfb653ae7b62f424dc64fd680f688f
+
+COCOAPODS: 0.35.0

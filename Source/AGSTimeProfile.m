@@ -2,14 +2,14 @@
 // Created by Agens AS for IVY
 //
 
-#import "AGExecutionTime.h"
+#import "AGSTimeProfile.h"
 #include <stdlib.h>
 #import <QuartzCore/QuartzCore.h>
-#import "AGAssert.h"
 
 static void (^s_logger)(NSString *log);
+static BOOL s_enabled = NO;
 
-@interface AGExecutionTime ()
+@interface AGSTimeProfile ()
 
 @property (nonatomic, strong, readwrite) NSMutableArray *marks;
 @property (nonatomic, strong, readwrite) NSString *label;
@@ -20,7 +20,7 @@ static void (^s_logger)(NSString *log);
 
 @end
 
-@implementation AGExecutionTime
+@implementation AGSTimeProfile
 
 + (void)initialize
 {
@@ -36,11 +36,23 @@ static void (^s_logger)(NSString *log);
 
 + (instancetype)start:(NSString *)label
 {
-    AGExecutionTime *instance = [[self alloc] init];
-    instance.label = label;
-    instance.marks = [NSMutableArray new];
-    [instance.marks addObject:@(CACurrentMediaTime())];
-    return instance;
+    if(s_enabled)
+    {
+        AGSTimeProfile *instance = [[self alloc] init];
+        instance.label = label;
+        instance.marks = [NSMutableArray new];
+        [instance.marks addObject:@(CACurrentMediaTime())];
+        return instance;
+    }
+    else
+    {
+        static dispatch_once_t onceToken;
+        dispatch_once(&onceToken, ^{
+            NSString *log = [NSString stringWithFormat:@"Instance of %@ is not created. It has not been enabled. This message is only logged once.", NSStringFromClass([self class])];
+            s_logger(log);
+        });
+        return nil;
+    }
 }
 
 - (NSTimeInterval)mark
@@ -75,7 +87,7 @@ static void (^s_logger)(NSString *log);
     NSNumber *currentMark = self.marks[index];
     NSTimeInterval diffLast = [currentMark doubleValue] - [prevMark doubleValue];
     NSTimeInterval diffTotal = [currentMark doubleValue] - [firstMark doubleValue];
-    NSString *logString = [NSString stringWithFormat:@"[TIME] %@ | Diff last %.3fs | Diff total %.3fs | %i %@", self.label, diffLast, diffTotal, index, tag];
+    NSString *logString = [NSString stringWithFormat:@"[TIME] %@ | Diff last %.3fs | Diff total %.3fs | %i %@", self.label, diffLast, diffTotal, (int)index, tag];
     s_logger(logString);
 }
 
@@ -105,7 +117,7 @@ static void (^s_logger)(NSString *log);
     return diff;
 }
 
-- (void)endWhenMainThreadIsReady:(void(^)(AGExecutionTime *instance))onEnded
+- (void)endWhenMainThreadIsReady:(void(^)(AGSTimeProfile *instance))onEnded
 {
     dispatch_async(dispatch_get_main_queue(), ^{
         self.mainThreadReady = YES;
@@ -115,6 +127,11 @@ static void (^s_logger)(NSString *log);
             onEnded(self);
         }
     });
+}
+
++ (void)setEnabled:(BOOL)enabled
+{
+    s_enabled = enabled;
 }
 
 @end
