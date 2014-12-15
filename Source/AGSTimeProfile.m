@@ -8,6 +8,7 @@
 
 static void (^s_logger)(NSString *log);
 static BOOL s_enabled = NO;
+static NSUInteger s_idCounter = 0;
 
 @interface AGSTimeProfile ()
 
@@ -17,6 +18,7 @@ static BOOL s_enabled = NO;
 @property (nonatomic, assign, readwrite, getter = isMainThreadReady) BOOL mainThreadReady;
 @property (nonatomic, assign, readwrite) NSTimeInterval threshold;
 @property (nonatomic, assign, readwrite) NSTimeInterval startTime;
+@property (nonatomic, assign, readwrite) NSUInteger uniqueIdentifier;
 
 @end
 
@@ -39,6 +41,7 @@ static BOOL s_enabled = NO;
     if(s_enabled)
     {
         AGSTimeProfile *instance = [[self alloc] init];
+        instance.uniqueIdentifier = s_idCounter++;
         instance.label = label;
         instance.marks = [NSMutableArray new];
         [instance.marks addObject:@(CACurrentMediaTime())];
@@ -87,7 +90,7 @@ static BOOL s_enabled = NO;
     NSNumber *currentMark = self.marks[index];
     NSTimeInterval diffLast = [currentMark doubleValue] - [prevMark doubleValue];
     NSTimeInterval diffTotal = [currentMark doubleValue] - [firstMark doubleValue];
-    NSString *logString = [NSString stringWithFormat:@"[TIME] %@ | Diff last %.3fs | Diff total %.3fs | %i %@", self.label, diffLast, diffTotal, (int)index, tag];
+    NSString *logString = [NSString stringWithFormat:@"[TIME %i] %@ | Diff last %.3fs | Diff total %.3fs | %i %@", (unsigned int)self.uniqueIdentifier, self.label, diffLast, diffTotal, (int)index, tag];
     s_logger(logString);
 }
 
