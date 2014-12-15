@@ -6,7 +6,7 @@ Measure time spent executing code across threads.
 
 ### Installation
 
-New-school: Use the cocoapod named `AGSTimeProfile`.
+New-school: Use the cocoapod named `AGSTimeProfile`.   
 Old-school: Grab the files found in `Source`.
 
 
