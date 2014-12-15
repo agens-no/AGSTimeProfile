@@ -20,7 +20,10 @@
 + (instancetype)start:(NSString *)label;
 - (NSTimeInterval)mark;
 - (NSTimeInterval)end;
+
 - (void)endWhenMainThreadIsReady:(void(^)(AGSTimeProfile *instance))onEnded;
+- (void)endWhenMainThreadIsReadyAndLogAllMarks;
+- (void)endAndLogAllMarks;
 
 - (void)logAllMarks;
 

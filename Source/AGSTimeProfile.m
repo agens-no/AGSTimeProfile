@@ -117,6 +117,19 @@ static BOOL s_enabled = NO;
     return diff;
 }
 
+- (void)endWhenMainThreadIsReadyAndLogAllMarks
+{
+    [self endWhenMainThreadIsReady:^(AGSTimeProfile *instance) {
+        [instance logAllMarks];
+    }];
+}
+
+- (void)endAndLogAllMarks
+{
+    [self end];
+    [self logAllMarks];
+}
+
 - (void)endWhenMainThreadIsReady:(void(^)(AGSTimeProfile *instance))onEnded
 {
     dispatch_async(dispatch_get_main_queue(), ^{
