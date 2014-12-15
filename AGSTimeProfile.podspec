@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
     s.name         = "AGSTimeProfile"
-    s.version      = "1.0"
+    s.version      = "1.0.1"
     s.summary      = "Measure how much time different blocks of code takes to execute"
     s.homepage     = "https://github.com/hfossli/AGSTimeProfile"
     s.license      = 'MIT'
